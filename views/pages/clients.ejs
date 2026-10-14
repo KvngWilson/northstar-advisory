@@ -1,0 +1,9 @@
+<section class="page-heading"><p class="eyebrow">CLIENT INTELLIGENCE</p><h1>Client directory</h1><p class="lead">View client classifications, risk categories, and advisory assignments.</p></section>
+<section class="surface"><div class="section-bar"><h2>All clients</h2><span class="count-label"><%= clients.length %> records</span></div>
+<div class="table-responsive"><table class="table align-middle mb-0"><caption class="visually-hidden">Client records with links to individual profiles</caption><thead><tr><th scope="col">Client</th><th scope="col">Classification</th><th scope="col">Risk category</th><th scope="col">Advisor</th><th scope="col">Profile</th></tr></thead><tbody>
+<% clients.forEach(client => { %>
+<tr><th scope="row"><a class="client-name" href="/clients/<%= encodeURIComponent(client.id) %>"><%= client.name %></a><span class="record-id"><%= client.id %></span></th><td><%= client.classification %></td><td><%- include('../partials/riskBadge', { risk: client.riskCategory }) %></td><td><%= client.advisor %></td><td><a class="profile-link" href="/clients/<%= encodeURIComponent(client.id) %>" aria-label="View profile for <%= client.name %>">View profile <span aria-hidden="true">→</span></a></td></tr>
+<% }) %>
+<% if (!clients.length) { %><tr><td colspan="5" class="p-4 text-center">No client records are available.</td></tr><% } %>
+</tbody></table></div></section>
+<p class="data-note">Records are loaded from the central dataset on each page request.</p>

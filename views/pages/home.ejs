@@ -1,0 +1,7 @@
+<section class="page-heading"><p class="eyebrow">OPERATIONS OVERVIEW</p><h1>Clarity for every client decision.</h1><p class="lead">A shared view of client records for advisory, compliance, and operations teams.</p><a href="/clients" class="btn btn-primary mt-2">Open client directory <span aria-hidden="true">→</span></a></section>
+<div class="row g-3 mb-4">
+  <% [{label:'Client records', value:count}, {label:'Corporate clients', value:corporate}, {label:'High-risk profiles', value:highRisk}, {label:'Pending KYC reviews', value:pendingKyc}].forEach(metric => { %>
+    <div class="col-6 col-lg-3"><div class="metric-card"><p><%= metric.label %></p><strong><%= metric.value %></strong></div></div>
+  <% }) %>
+</div>
+<section class="surface p-4"><p class="eyebrow">ONE CONSISTENT WORKSPACE</p><h2>Current records. Shared standards.</h2><div class="row g-4 mt-1"><div class="col-md-4"><h3>Advisory preparation</h3><p>Review client objectives, portfolio values, and assigned advisors before a session.</p></div><div class="col-md-4"><h3>Compliance visibility</h3><p>Find risk categories, KYC status, and review dates in the same place on every profile.</p></div><div class="col-md-4"><h3>Centralized data</h3><p>Pages load the current JSON dataset on each request. Refresh to see saved changes.</p></div></div></section>

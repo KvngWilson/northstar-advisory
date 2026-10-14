@@ -1,0 +1,6 @@
+<nav class="portal-nav" aria-label="Main navigation">
+  <div class="container d-flex gap-4">
+    <a href="/" class="<%= currentPath === '/' ? 'active' : '' %>" <%- currentPath === '/' ? 'aria-current="page"' : '' %>>Overview</a>
+    <a href="/clients" class="<%= currentPath.startsWith('/clients') ? 'active' : '' %>" <%- currentPath === '/clients' ? 'aria-current="page"' : '' %>>Client directory</a>
+  </div>
+</nav>

@@ -1,0 +1,24 @@
+{
+  "name": "northstar-advisory-portal",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Server-rendered client portal with shared EJS layouts",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "node --watch app.js",
+    "test": "node --test tests/*.test.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "bootstrap": "^5.3.8",
+    "ejs": "^7.0.1",
+    "express": "^5.3.0",
+    "express-ejs-layouts": "^2.5.1"
+  },
+  "devDependencies": {
+    "supertest": "^7.3.1"
+  }
+}

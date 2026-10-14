@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title><%= title %> | NorthStar Advisory</title>
+    <link rel="icon" href="/images/northstar.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="/css/styles.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Skip to content</a>
+    <%- include('../partials/header') %> <%- include('../partials/navigation')
+    %>
+    <main id="main-content" class="container portal-main"><%- body %></main>
+    <%- include('../partials/footer') %>
+  </body>
+</html>
