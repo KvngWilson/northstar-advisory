@@ -1,0 +1,3 @@
+require('dotenv').config();
+const fs=require('node:fs/promises');const path=require('node:path');const mongoose=require('mongoose');const Client=require('../models/Client');const {validateClients}=require('../storage/validate');
+(async()=>{const records=validateClients(JSON.parse(await fs.readFile(path.join(__dirname,'../data/clients.json'),'utf8')));await mongoose.connect(process.env.MONGODB_URI||'mongodb://127.0.0.1:27017/northstar');try{for(const record of records)await Client.replaceOne({id:record.id},record,{upsert:true,runValidators:true});console.log(`Seeded ${records.length} clients`);}finally{await mongoose.disconnect();}})().catch(e=>{console.error(e);process.exitCode=1;});

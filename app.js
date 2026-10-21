@@ -1,65 +1,59 @@
+require("dotenv").config();
 const express = require("express");
-const layouts = require("express-ejs-layouts");
 const path = require("node:path");
-const clientRoutes = require("./routes/clientRoutes");
-const createApp = (options = {}) => {
+const mongoose = require("mongoose");
+const { fileStore } = require("./storage/file");
+const { mongoStore } = require("./storage/mongo");
+const { routes } = require("./routes/clients");
+function createApp(options = {}) {
+  const driver = options.driver || process.env.STORAGE_DRIVER || "file";
+  if (!["file", "mongodb"].includes(driver))
+    throw new Error("STORAGE_DRIVER must be file or mongodb");
+  const store =
+    options.store ||
+    (driver === "mongodb"
+      ? mongoStore()
+      : fileStore(
+          options.dataPath ||
+            process.env.DATA_FILE ||
+            path.join(__dirname, "data/clients.json"),
+        ));
   const app = express();
   app.disable("x-powered-by");
-  app.set("view engine", "ejs");
-  app.set("views", path.join(__dirname, "views"));
-  app.set("layout", "layouts/main");
-  app.locals.money = (value) =>
-    new Intl.NumberFormat("en-CA", {
-      style: "currency",
-      currency: "CAD",
-      maximumFractionDigits: 0,
-    }).format(value);
-  app.locals.riskClass = (risk) =>
-    ({ Low: "low", Moderate: "moderate", High: "high" })[risk] || "unknown";
   app.use(
-    "/css/bootstrap.min.css",
-    express.static(
-      path.join(__dirname, "node_modules/bootstrap/dist/css/bootstrap.min.css"),
-    ),
+    "/vendor/angular",
+    express.static(path.join(__dirname, "node_modules/angular")),
+  );
+  app.use(
+    "/vendor/bootstrap",
+    express.static(path.join(__dirname, "node_modules/bootstrap/dist/css")),
   );
   app.use(express.static(path.join(__dirname, "public")));
-  app.use(layouts);
-  app.use((req, res, next) => {
-    res.set("Cache-Control", "no-store");
-    res.locals.currentPath = req.path;
-    res.locals.year = new Date().getFullYear();
-    next();
-  });
-  app.use(
-    clientRoutes(options.dataPath || path.join(__dirname, "data/clients.json")),
+  app.use("/api", routes(store));
+  app.get(["/", "/clients", "/clients/:id"], (req, res) =>
+    res.sendFile(path.join(__dirname, "public/index.html")),
   );
-  app.use((req, res) =>
-    res
-      .status(404)
-      .render("pages/error", {
-        title: "Page not found",
-        heading: "Page not found",
-        message: "The page or client record you requested does not exist.",
-      }),
-  );
-  app.use((error, req, res, next) => {
-    if (res.headersSent) return next(error);
-    console.error("Unable to render client data:", error.message);
-    res
-      .status(500)
-      .render("pages/error", {
-        title: "Data unavailable",
-        heading: "Client data is temporarily unavailable",
-        message:
-          "The dataset could not be loaded. Please contact the operations team or try again after the dataset is corrected.",
-      });
+  app.use((req, res) => res.status(404).json({ error: "Not found" }));
+  app.use((err, req, res, next) => {
+    console.error(err);
+    res.status(500).json({ error: "Client data is unavailable" });
   });
   return app;
-};
-if (require.main === module) {
-  const port = process.env.PORT || 3000;
-  createApp().listen(port, () =>
-    console.log(`NorthStar portal: http://localhost:${port}`),
+}
+async function start() {
+  if ((process.env.STORAGE_DRIVER || "file") === "mongodb")
+    await mongoose.connect(
+      process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/northstar",
+    );
+  const app = createApp();
+  const port = Number(process.env.PORT || 3000);
+  return app.listen(port, () =>
+    console.log(`NorthStar: http://localhost:${port}`),
   );
 }
-module.exports = { createApp };
+if (require.main === module)
+  start().catch((err) => {
+    console.error(err);
+    process.exitCode = 1;
+  });
+module.exports = { createApp, start };
